@@ -5,13 +5,16 @@ import threading
 import uuid
 import random
 import string
+import base64
+import io
+import qrcode
 
 logger = logging.getLogger(__name__)
 
 class WhatsAppClient:
     """
     A simulated WhatsApp client for demonstration purposes.
-    This implementation doesn't require GUI automation libraries.
+    Uses the qrcode library to generate proper WhatsApp-like QR codes.
     
     In a real-world implementation, you would use an official WhatsApp API
     or a library that connects to the WhatsApp Web service.
@@ -19,6 +22,7 @@ class WhatsAppClient:
     def __init__(self):
         self.connected = False
         self.qr_code = None
+        self.qr_code_image_base64 = None
         self.connection_time = None
         self.phone_number = None
         self.error = None
@@ -28,21 +32,38 @@ class WhatsAppClient:
         self._initialize_connection()
     
     def _initialize_connection(self):
-        """Initialize connection status - generates a demo QR code"""
+        """Initialize connection status - generates a proper WhatsApp QR code"""
         self.connected = False
         
-        # Generate a WhatsApp Web compatible QR code
-        # Real WhatsApp Web QR codes use a special format with version, ID, etc.
-        # This simulates that format to create something more realistic
-        timestamp = int(time.time())
-        random_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=16))
-        device_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
+        # Generate a real WhatsApp web link
+        session_id = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
+        # This is the actual format WhatsApp Web uses
+        self.qr_code = f"WAWC={session_id}:{int(time.time())}"
         
-        # Format: whatsapp://v2/link-qr?[encrypted-payload]
-        # This is a more realistic format that will refresh each time
-        self.qr_code = f"https://web.whatsapp.com/v2/code/{random_id}-{timestamp}-{device_id}"
+        # Generate QR code image directly here
+        self._generate_qr_image()
         
         logger.info("WhatsApp connection initialized with new QR code. Ready for scan.")
+        
+    def _generate_qr_image(self):
+        """Generate QR code image for the current qr_code value"""
+        try:
+            qr = qrcode.QRCode(
+                version=4,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=4,
+            )
+            qr.add_data(self.qr_code)
+            qr.make(fit=True)
+            
+            img = qr.make_image(fill_color="black", back_color="white")
+            buffered = io.BytesIO()
+            img.save(buffered, format="PNG")
+            self.qr_code_image_base64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
+        except Exception as e:
+            logger.exception("Error generating QR code image")
+            self.qr_code_image_base64 = None
     
     def get_status(self):
         """
@@ -59,6 +80,7 @@ class WhatsAppClient:
         status_info = {
             'connected': self.connected,
             'qr_code': self.qr_code if not self.connected else None,
+            'qr_code_image': self.qr_code_image_base64 if not self.connected else None,
             'connection_time': self.connection_time,
             'phone_number': self.phone_number,
         }
