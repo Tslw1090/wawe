@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation | WhatsApp Web Client API</title>
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container py-5">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">API Documentation</li>
+            </ol>
+        </nav>
+        
+        <header class="text-center mb-5">
+            <h1><i class="bi bi-file-earmark-code"></i> API Documentation</h1>
+            <p class="lead">Learn how to use the WhatsApp Web Client API</p>
+        </header>
+        
+        <div class="row">
+            <div class="col-md-3">
+                <div class="sticky-top pt-3">
+                    <div class="list-group">
+                        <a href="#introduction" class="list-group-item list-group-item-action">Introduction</a>
+                        <a href="#status-endpoint" class="list-group-item list-group-item-action">Status Endpoint</a>
+                        <a href="#send-endpoint" class="list-group-item list-group-item-action">Send Message Endpoint</a>
+                        <a href="#error-handling" class="list-group-item list-group-item-action">Error Handling</a>
+                        <a href="#code-examples" class="list-group-item list-group-item-action">Code Examples</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-9">
+                <div class="card mb-4" id="introduction">
+                    <div class="card-header">
+                        <h2><i class="bi bi-info-circle"></i> Introduction</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>The WhatsApp Web Client API provides a simple way to check the connection status and send WhatsApp messages via HTTP requests. The API has two main endpoints:</p>
+                        <ul>
+                            <li><code>/api/status</code> - Check WhatsApp connection status</li>
+                            <li><code>/send</code> - Send WhatsApp messages</li>
+                        </ul>
+                        <p>Before sending messages, you need to connect to WhatsApp by scanning the QR code shown at the <a href="{{ url_for('status') }}">/status</a> page.</p>
+                    </div>
+                </div>
+                
+                <div class="card mb-4" id="status-endpoint">
+                    <div class="card-header">
+                        <h2><i class="bi bi-wifi"></i> Status Endpoint</h2>
+                    </div>
+                    <div class="card-body">
+                        <h4>GET /api/status</h4>
+                        <p>Check the current connection status of the WhatsApp client.</p>
+                        
+                        <h5>Response</h5>
+                        <p>The endpoint returns a JSON object with the following structure:</p>
+                        <pre><code class="language-json">{
+  "connected": true | false,
+  "qr_code": "string or null if connected",
+  "qr_code_image": "base64 encoded QR code image or null if connected",
+  "connection_time": "timestamp or null if not connected",
+  "phone_number": "connected phone number or null if not connected",
+  "error": "error message if any"
+}</code></pre>
+                        
+                        <h5>Example Response (Not Connected)</h5>
+                        <pre><code class="language-json">{
+  "connected": false,
+  "qr_code": "whatsapp://example_qr_code_placeholder",
+  "qr_code_image": "base64_encoded_image_data",
+  "connection_time": null,
+  "phone_number": null
+}</code></pre>
+                        
+                        <h5>Example Response (Connected)</h5>
+                        <pre><code class="language-json">{
+  "connected": true,
+  "qr_code": null,
+  "qr_code_image": null,
+  "connection_time": 1678912345,
+  "phone_number": "911234567890"
+}</code></pre>
+                    </div>
+                </div>
+                
+                <div class="card mb-4" id="send-endpoint">
+                    <div class="card-header">
+                        <h2><i class="bi bi-send"></i> Send Message Endpoint</h2>
+                    </div>
+                    <div class="card-body">
+                        <h4>POST /send</h4>
+                        <p>Send a WhatsApp message to a specified phone number.</p>
+                        
+                        <h5>Request Body</h5>
+                        <p>The endpoint expects a JSON object with the following structure:</p>
+                        <pre><code class="language-json">{
+  "phone": "phone number with country code (no + required)",
+  "message": "message content"
+}</code></pre>
+                        
+                        <h5>Example Request</h5>
+                        <pre><code class="language-json">{
+  "phone": "911234567890",
+  "message": "Hello from WhatsApp Web Client API!"
+}</code></pre>
+                        
+                        <h5>Successful Response</h5>
+                        <pre><code class="language-json">{
+  "status": "success",
+  "message": "Message sent successfully"
+}</code></pre>
+                        
+                        <h5>Error Response</h5>
+                        <pre><code class="language-json">{
+  "status": "error",
+  "message": "Error message describing the issue"
+}</code></pre>
+                    </div>
+                </div>
+                
+                <div class="card mb-4" id="error-handling">
+                    <div class="card-header">
+                        <h2><i class="bi bi-exclamation-triangle"></i> Error Handling</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>The API uses standard HTTP status codes and returns detailed error messages in case of failure:</p>
+                        <ul>
+                            <li><strong>400 Bad Request</strong> - Missing or invalid request parameters</li>
+                            <li><strong>403 Forbidden</strong> - Not connected to WhatsApp</li>
+                            <li><strong>500 Internal Server Error</strong> - Server error or WhatsApp sending failure</li>
+                        </ul>
+                        <p>Always check the <code>status</code> and <code>message</code> fields in the response to handle errors properly.</p>
+                    </div>
+                </div>
+                
+                <div class="card" id="code-examples">
+                    <div class="card-header">
+                        <h2><i class="bi bi-code-slash"></i> Code Examples</h2>
+                    </div>
+                    <div class="card-body">
+                        <h4>Checking Status (JavaScript)</h4>
+                        <pre><code class="language-javascript">// Check WhatsApp connection status
+fetch('/api/status')
+  .then(response => response.json())
+  .then(data => {
+    if (data.connected) {
+      console.log('Connected to WhatsApp as', data.phone_number);
+    } else {
+      console.log('Not connected to WhatsApp. QR code available.');
+      // Display QR code image: data.qr_code_image (base64)
+    }
+  })
+  .catch(error => console.error('Error:', error));</code></pre>
+                        
+                        <h4>Sending a Message (JavaScript)</h4>
+                        <pre><code class="language-javascript">// Send a WhatsApp message
+const messageData = {
+  phone: '911234567890',
+  message: 'Hello from API demo!'
+};
+
+fetch('/send', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(messageData),
+})
+.then(response => response.json())
+.then(data => {
+  if (data.status === 'success') {
+    console.log('Message sent successfully');
+  } else {
+    console.error('Error:', data.message);
+  }
+})
+.catch(error => console.error('Error:', error));</code></pre>
+                        
+                        <h4>Checking Status (Python)</h4>
+                        <pre><code class="language-python">import requests
+
+# Check WhatsApp connection status
+response = requests.get('http://localhost:5000/api/status')
+data = response.json()
+
+if data['connected']:
+    print(f"Connected to WhatsApp as {data['phone_number']}")
+else:
+    print("Not connected to WhatsApp. QR code available.")</code></pre>
+                        
+                        <h4>Sending a Message (Python)</h4>
+                        <pre><code class="language-python">import requests
+
+# Send a WhatsApp message
+message_data = {
+    'phone': '911234567890',
+    'message': 'Hello from Python!'
+}
+
+response = requests.post('http://localhost:5000/send', json=message_data)
+data = response.json()
+
+if data['status'] == 'success':
+    print('Message sent successfully')
+else:
+    print(f"Error: {data['message']}")</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <p>WhatsApp Web Client API | <a href="https://github.com/your-username/whatsapp-web-client" class="text-info">GitHub</a></p>
+    </footer>
+</body>
+</html>
