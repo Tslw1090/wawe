@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         qrCodeHtml = `
                             <div class="text-center mb-4">
                                 <h4>Scan this QR code with WhatsApp</h4>
-                                <img src="data:image/png;base64,${data.qr_code_image}?t=${timestamp}" class="img-fluid border border-light p-2 bg-white" style="max-width: 300px;" alt="WhatsApp QR Code">
+                                <img src="data:image/png;base64,${data.qr_code_image}" class="img-fluid border border-light p-2 bg-white" style="max-width: 300px;" alt="WhatsApp QR Code">
                                 <p class="mt-2 text-muted small">QR Code refreshed at: ${new Date().toLocaleTimeString()}</p>
                                 <button id="refreshQrBtn" class="btn btn-outline-info btn-sm mt-2" onclick="fetchStatus()">
                                     <i class="bi bi-arrow-repeat"></i> Refresh QR Code
