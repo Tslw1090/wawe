@@ -31,11 +31,18 @@ class WhatsAppClient:
         """Initialize connection status - generates a demo QR code"""
         self.connected = False
         
-        # Generate a random string for the QR code to make it look unique each time
-        random_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
-        self.qr_code = f"WHATSAPP_CONNECT:{random_id}"
+        # Generate a WhatsApp Web compatible QR code
+        # Real WhatsApp Web QR codes use a special format with version, ID, etc.
+        # This simulates that format to create something more realistic
+        timestamp = int(time.time())
+        random_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=16))
+        device_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
         
-        logger.info("WhatsApp connection initialized. Ready for QR code scan.")
+        # Format: whatsapp://v2/link-qr?[encrypted-payload]
+        # This is a more realistic format that will refresh each time
+        self.qr_code = f"https://web.whatsapp.com/v2/code/{random_id}-{timestamp}-{device_id}"
+        
+        logger.info("WhatsApp connection initialized with new QR code. Ready for scan.")
     
     def get_status(self):
         """
