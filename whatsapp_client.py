@@ -48,7 +48,14 @@ class WhatsAppClient:
         """
         Get the current connection status
         Returns: dict with status information
+        
+        Note: This will generate a new QR code every time if not connected
+        to ensure freshness of the code for better scanning
         """
+        # If not connected, generate a new QR code to ensure freshness
+        if not self.connected:
+            self._initialize_connection()
+            
         status_info = {
             'connected': self.connected,
             'qr_code': self.qr_code if not self.connected else None,
