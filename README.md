@@ -29,8 +29,8 @@ Here are some screenshots of the application (when deployed):
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/whatsapp-web-client.git
-   cd whatsapp-web-client
+   git clone https://github.com/Tslw1090/wawe.git
+   cd wawe
    ```
 
 2. Create a virtual environment:

@@ -12,8 +12,8 @@ This document provides detailed instructions for setting up the WhatsApp Web Cli
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/whatsapp-web-client.git
-cd whatsapp-web-client
+git clone https://github.com/Tslw1090/wawe.git
+cd wawe
 ```
 
 ### Step 2: Create a Virtual Environment
@@ -107,9 +107,10 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-COPY . .
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install --no-cache-dir flask==2.3.3 flask-sqlalchemy==3.1.1 gunicorn==23.0.0 qrcode==7.4.2 pillow==10.0.0
+COPY . .
 
 EXPOSE 5000
 
